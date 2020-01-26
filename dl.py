@@ -2,10 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import requests
+import os
 
 
 NEW = "new_tiktoks.txt"
 OLD = "old_tiktoks.txt"
+VIDEO_DIR = os.getcwd() + "/videos"
 OPTIONS = Options()
 CHROME_PATH = "C:/bin/chromedriver.exe"
 VIDEO_CLASS = "jsx-3382097194"
@@ -24,7 +26,7 @@ def get_link(link):
 
 def download_file(name, url):
     r = requests.get(url)
-    f = open(name, 'wb')
+    f = open(VIDEO_DIR + name, 'wb')
     for chunk in r.iter_content(chunk_size=255):
         if chunk:
             f.write(chunk)
@@ -32,11 +34,15 @@ def download_file(name, url):
 
 
 def init():
+    for file in os.listdir(VIDEO_DIR):
+        if file.endswith(".mp4"):
+            os.remove(os.path.join(VIDEO_DIR, file))
     OPTIONS.add_argument("--headless")
     old_file = open(OLD, "r")
     old_links = old_file.readlines()
     new_file = open(NEW, "r")
-    new_links = list(filter(lambda line: line not in old_links, new_file.readlines()))
+    new_links = new_file.readlines()
+    # new_links = list(filter(lambda line: line not in old_links, new_links))
     old_file.close()
     new_file.close()
     return (new_links, old_links)
@@ -47,17 +53,16 @@ def exit():
     for link in (old_links + new_links):
         old_file.write(link)
     old_file.close()
-    print("Closing")
 
 
 def run():
     for i, link in enumerate(new_links):
         url = get_link(link)
-        download_file(str(i)+".mp4", url)
+        download_file("/%d.mp4" % i+1, url)
         print(i, url)
 
 
 if __name__ == "__main__":
     (new_links, old_links) = init()
-    # run()
+    run()
     exit()
