@@ -33,20 +33,27 @@ def download_file(name, url):
 
 def init():
     OPTIONS.add_argument("--headless")
-    in = open()
+    old_file = open(OLD, "r")
+    old_links = old_file.readlines()
+    new_file = open(NEW, "r")
+    links = list(filter(lambda line: line not in old_links, new_file.readlines()))
+    old_file.close()
+    new_file.close()
+    return links
 
 
-def close():
+def exit():
     print("Closing")
 
 
 def run():
-    for i, link in enumerate(links):
+    for i, link in enumerate(new_links):
         url = get_link(link)
         download_file(str(i)+".mp4", url)
         print(i, url)
 
 
 if __name__ == "__main__":
-    init()
-    run()
+    new_links = init()
+    print(new_links)
+    # run()
