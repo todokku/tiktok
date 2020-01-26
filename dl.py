@@ -36,13 +36,17 @@ def init():
     old_file = open(OLD, "r")
     old_links = old_file.readlines()
     new_file = open(NEW, "r")
-    links = list(filter(lambda line: line not in old_links, new_file.readlines()))
+    new_links = list(filter(lambda line: line not in old_links, new_file.readlines()))
     old_file.close()
     new_file.close()
-    return links
+    return (new_links, old_links)
 
 
 def exit():
+    old_file = open(OLD, "w")
+    for link in (old_links + new_links):
+        old_file.write(link)
+    old_file.close()
     print("Closing")
 
 
@@ -54,6 +58,6 @@ def run():
 
 
 if __name__ == "__main__":
-    new_links = init()
-    print(new_links)
+    (new_links, old_links) = init()
     # run()
+    exit()
