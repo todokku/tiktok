@@ -41,8 +41,8 @@ def init():
     old_file = open(OLD, "r")
     old_links = old_file.readlines()
     new_file = open(NEW, "r")
-    new_links = new_file.readlines()
-    # new_links = list(filter(lambda line: line not in old_links, new_links))
+    new_links = list(dict.fromkeys(new_file.readlines()))
+    new_links = list(filter(lambda line: line not in old_links, new_links))
     old_file.close()
     new_file.close()
     return (new_links, old_links)
@@ -58,7 +58,7 @@ def exit():
 def run():
     for i, link in enumerate(new_links):
         url = get_link(link)
-        download_file("/%d.mp4" % i+1, url)
+        download_file("/%d.mp4" % i, url)
         print(i, url)
 
 
