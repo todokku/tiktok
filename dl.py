@@ -20,8 +20,12 @@ def get_link(link):
     driver = webdriver.Chrome(executable_path=CHROME_PATH, options=OPTIONS)
     driver.get(link)
     video = driver.find_element(By.CLASS_NAME, VIDEO_CLASS)
-    return video.get_attribute("src")
-    driver.close()
+    if str(driver.current_url) in old_links:
+        driver.close()
+        return None
+    else:
+        old_links.append(driver.current_url)
+        return video.get_attribute("src")
 
 
 def download_file(name, url):
@@ -58,8 +62,9 @@ def exit():
 def run():
     for i, link in enumerate(new_links):
         url = get_link(link)
-        download_file("/%d.mp4" % i, url)
-        print(i, url)
+        if url is not None:
+            download_file("/%d.mp4" % i, url)
+            print(i, url)
 
 
 if __name__ == "__main__":
